@@ -5,7 +5,7 @@ import numpy as np
 from pandas import read_csv
 
 from sklearn.decomposition import PCA
-
+import csv
 
 classes = ['noseX',	'noseY',	'neckX',	'neckY',	'RShoulderX',	'RShoulderY',	'RElbowX',	'RElbowY',
            'RWristX',	'RWristY',	'LShoulderX',	'LShoulderY',	'LElbowX',	'LElbowY',	'LWristX',	'LWristY',
@@ -15,25 +15,24 @@ classes = ['noseX',	'noseY',	'neckX',	'neckY',	'RShoulderX',	'RShoulderY',	'RElb
            'LBigToeY',	'LSmallToeX',	'LSmallToeY',	'LHeelX',	'LHeelY',	'RBigToeX'	,'RBigToeY'	,'RSmallToeX',
            'RSmallToeY',	'RHeelX',	'RHeelY'
 ]
+names = ['move_scaner', 'tune_angle', 'tune_height', 'turn_on']
+classes_numbers = [10, 3, 2, 3]
+cl = 3
+for number in range(1,classes_numbers[cl]+1):
+    dataframe = read_csv('/home/natalia/Рабочий стол/Train_data/All/{}{}.csv'.format(names[cl],number), names=classes)
+    myFile = open('/home/natalia/Рабочий стол/Train_data/All/PCA/' + '{}{}.csv'.format(names[cl],number), 'w')
+    array = dataframe.values
 
-dataframe = read_csv(url, names=names)
+    X = array[1:,:]
 
-array = dataframe.values
+    # feature extraction
 
-X = array[:,0:8]
+    pca = PCA(n_components=20)
 
-Y = array[:,8]
+    fit = pca.fit(X)
 
-# feature extraction
+    features = fit.transform(X)
 
-pca = PCA(n_components=3)
+    writer = csv.writer(myFile)
+    writer.writerows(features)
 
-fit = pca.fit(X)
-
-features = fit.transform(X)
-
-# summarize components
-
-print("Explained Variance: %s") % fit.explained_variance_ratio_
-
-print(features[0:5,:])
